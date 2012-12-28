@@ -3,7 +3,8 @@
 -- If you get "Segmentation fault", try again (it's a bug in Mac-version)
 -}
 
--- function:
+-- Functions
+-----------------------
 -- name [params] = <functionality>
 -- ! Create a doubleMe function that doubles given parameter
 
@@ -30,6 +31,8 @@ Ok, modules loaded: Main.
 ??
 -}
 
+-- if-then-else
+-----------------------
 -- You can do ternary operation inside a function with if-then-else.
 -- ! Create function that doubles number that are smaller than 100
 --   and otherwise returns given number as is.
@@ -44,6 +47,7 @@ Ok, modules loaded: Main.
 > doubleSmallNumber 101
 ??
 
+-----------------------
 -- ! Looking at a type of a function
 > :type doubleMe
 doubleMe :: Num a => a -> a
@@ -67,6 +71,7 @@ class Eq a => Ord a where
 -}
 
 -- Lists
+-----------------------
 l = [1,2,3]
 l2 = l ++ [4,5,6]
 
@@ -84,6 +89,7 @@ l2 = l ++ [4,5,6]
 -- recurseList (x:xs) = operation x : recurseList xs
 
 -- Strings
+-----------------------
 > let text = "Houston!"
 > "Hello " ++ text
 
@@ -100,7 +106,8 @@ l2 = l ++ [4,5,6]
 > head alph
 ??
 
--- infinite list
+-- Infinite list
+-----------------------
 -- Because Haskell is lazy nothing is evaluated before it is actually needed.
 > let inf = [1..]
 > take 10 inf
@@ -108,7 +115,8 @@ l2 = l ++ [4,5,6]
 -- You can use ctrl-c to stop showing plain inf.
 
 
--- infix function
+-- Infix function
+-----------------------
 -- Use backticks to make function infix (fun a b becomes a `fun` b).
 > 4 `elem` [3,4,5]
 ??
@@ -117,6 +125,7 @@ l2 = l ++ [4,5,6]
 -- ! Can you guess what :t elem looks like?
 
 -- Other stuff
+-----------------------
 > let inf2 = [2,4..]
 > take 20 inf2
 ??
@@ -124,10 +133,12 @@ l2 = l ++ [4,5,6]
 ??
 
 -- Funky stuff
+-----------------------
 > [0.1, 0.3 .. 1]
 ??
 
 -- List comprehensions
+-----------------------
 > [x*2 | x <- [1..10]]
 ??
 -- ! From a list of 1 to 10 pick those numbers that are bigger than 12 when doubled.
@@ -140,6 +151,7 @@ l2 = l ++ [4,5,6]
 
 
 -- Pattern matching
+-----------------------
 -- Create a function that takes Integral and returns String.
 -- Like this: sayMe 1 gives "One!", sayMe 2 gives "Two!".
 -- Three is enough for now.
@@ -164,10 +176,11 @@ l2 = l ++ [4,5,6]
 
 -}
 -- Pattern matching example with tuples
+------------------------------------------
 -- Lets create function that adds two dimensional vectors together.
 -- In other words takes two vectors and return a new vector where xs and ys are summed up.
 -- Instead of creating signature: addVectors :: (Num, Num) -> (Num, Num) -> (Num, Num)
---   we can use "=>" to say "a is Num" and then repeat just a:
+--   we can use "=>" to say "a is Num" and then repeat just a.
 -- ! Create function body (function takes two parameters).
 --   (use fst to get tuple's first element and snd to get its second element)
 addVectors :: (Num a) => (a, a) -> (a, a) -> (a, a)
@@ -185,11 +198,14 @@ first = undefined
 True
 > first (5,6,7) == 5
 True
+> first (5,6,7) == 6
+False
 
 
 
 
--- Guards:
+-- Guards
+-----------------------
 max' :: (Ord a) => a -> a -> a
 max' a b
     | a > b     = a
@@ -213,6 +229,7 @@ bmiTell' weight height
     where bmi = weight / height ^ 2
 
 -- Using "let" in code.
+-----------------------
 cylinder :: (RealFloat a) => a -> a -> a
 cylinder r h = 
     let sideArea = 2 * pi * r * h
@@ -220,58 +237,69 @@ cylinder r h =
     in  sideArea + 2 * topArea
 
 {-
--- Wether to use let-in or where depends on which is better for readability.
+-- Whether to use let-in or where depends on which is better for readability.
 
 -- Let can also be used to make inline functions.
 > [let square x = x * x in (square 5, square 3, square 2)]
 [(25,9,4)]
 -}
+
 -- How to use case
+-----------------------
 describeList :: [a] -> String  
 describeList xs = "The list is " ++ case xs of [] -> "empty."  
                                                [x] -> "a singleton list."   
                                                xs -> "a longer list."
--- ! Try giving describeList function lists of different size.
+-- ! Try giving describeList function lists of different size in ghci.
 
-{-
+
 -- Recursion ftw
-
+-----------------------
 -- ! Recurse a list of Ints and add one to each of the elements.
 --   Start with edge case: empty list returns empty list.
 --   Remember how you get first and rest of a list in pattern matching?
 --   Actual function sums first with one, concatenates it to the rest with
 --   ":" and the rest is used in recursive call.
--}
 addOneToAll = undefined
 
 -- Another way to do it is using case:
 addOneToAll' = undefined
 
-{-
+
 -- Map
-
--- Can you figure how to do previous functions with a map function?
+-----------------------
+-- Can you figure how to do addOneToAll with a map function?
 -- Hoogle "map"
--}
 
--- Which leads to:
+
+-- Apply what you learned here:
 addOneToAll'' = undefined
 
 {-
 -- Fold...
+-----------------------
 > :t foldl
 foldl :: (a -> b -> a) -> a -> [b] -> a
+-- It takes a function, that takes two parameters and returns a value)
+-- and a variable (accumulator)
+-- and list of something
+-- and returns a value.
+-- Meaning: It goes through a list and accumulates something into result
+--          as dictated by the given function.
 
--- ...and lambda (anonymous function)
+-- We can use lambda (anonymous function)
+      lambda    accumulator  list
+          |             |   |
 > foldl (\x y -> x + y) 0 [1,2,3]
 6
 
--- foldl1 to use first element as the accumulator starting point
+-- You can use foldl1 to use first element as the accumulator starting point
 > foldl1 (\x y -> x + y) [1,2,3]
 6
 -}
 
 -- Data
+-----------------------
 type Name = String
 
 -- First name, Last name, Age
@@ -288,7 +316,8 @@ p1 = Person "Elli" "Esimerkki" 21
 "Elli"
 
 -- Not very handy because we need to remember order of parameters
--- and need to create those 'extracting' functions.
+-- when creating a new Person
+-- and need to create those 'extracting' functions by hand.
 -}
 
 -- Better way to do it:
@@ -306,12 +335,13 @@ p2 = Person2 {
              , age=21
              }
 {-
--- We get automagically 'extracting' functions:
+-- We get automagically all 'extracting' functions:
 > firstName p2
 "Esko"
 -}
 
 -- Own types
+-----------------------
 -- ! First add "deriving Show" to this type:
 data TrafficLight = Red | Yellow | Green
 
