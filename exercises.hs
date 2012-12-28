@@ -39,6 +39,7 @@ Ok, modules loaded: Main.
 
 
 
+
 {-
 > :r
 Ok, modules loaded: Main.
@@ -47,7 +48,7 @@ Ok, modules loaded: Main.
 > doubleSmallNumber 101
 ??
 
------------------------
+--------------------------------------
 -- ! Looking at a type of a function
 > :type doubleMe
 doubleMe :: Num a => a -> a
@@ -317,7 +318,7 @@ p1 = Person "Elli" "Esimerkki" 21
 
 -- Not very handy because we need to remember order of parameters
 -- when creating a new Person
--- and need to create those 'extracting' functions by hand.
+-- and you need to create those 'extracting' functions by hand.
 -}
 
 -- Better way to do it:
