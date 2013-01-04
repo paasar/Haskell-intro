@@ -178,7 +178,7 @@ l2 = l ++ [4,5,6]
 -}
 -- Pattern matching example with tuples
 ------------------------------------------
--- Lets create function that adds two dimensional vectors together.
+-- Let's create function that adds two dimensional vectors together.
 -- In other words takes two vectors and return a new vector where xs and ys are summed up.
 -- Instead of creating signature: addVectors :: (Num, Num) -> (Num, Num) -> (Num, Num)
 --   we can use "=>" to say "a is Num" and then repeat just a.
@@ -238,8 +238,6 @@ cylinder r h =
     in  sideArea + 2 * topArea
 
 {-
--- Whether to use let-in or where depends on which is better for readability.
-
 -- Let can also be used to make inline functions.
 > [let square x = x * x in (square 5, square 3, square 2)]
 [(25,9,4)]
