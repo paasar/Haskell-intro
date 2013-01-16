@@ -208,9 +208,9 @@ False
 -- Guards
 -----------------------
 max' :: (Ord a) => a -> a -> a
-max' a b
-    | a > b     = a
-    | otherwise = b
+max' x y
+    | x > y     = x
+    | otherwise = y
 
 -}
 bmiTell :: (RealFloat a) => a -> a -> String  

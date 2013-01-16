@@ -19,7 +19,7 @@ testsMax = TestList [testMax1
                     , testMax2
                     , testMax3
                     , testMax4
-                    --, testMax5
+                    , testMax5
                     ]
 -- > runTestTT testMax
 
