@@ -192,7 +192,7 @@ sayMe _ = error "Not between 1 and 3"
 -- ! Create function body (function takes two parameters).
 --   (use fst to get tuple's first element and snd to get its second element)
 addVectors :: (Num a) => (a, a) -> (a, a) -> (a, a)
-addVectors a b = (fst a + fst b, snd a + snd b)
+addVectors v1 v2 = (fst v1 + fst v2, snd v1 + snd v2)
 
 -- And better way to do it is looking straight into a tuple:
 addVectors' :: (Num a) => (a, a) -> (a, a) -> (a, a)
