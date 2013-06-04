@@ -1,0 +1,63 @@
+The Glasgow Haskell Compiler relies on the command line developer tools (gcc, ar, etc..). They can be installed as a part of Xcode, or via the "Command Line Tools for Xcode" package from http://developer.apple.com.
+   * Uusi versio
+--------------------------------
+http://james-iry.blogspot.co.uk/2009/05/brief-incomplete-and-mostly-wrong.html
+1990 - A committee formed by Simon Peyton-Jones, Paul Hudak, Philip Wadler, Ashton Kutcher, and People for the Ethical Treatment of Animals creates Haskell, a pure, non-strict, functional language. Haskell gets some resistance due to the complexity of using monads to control side effects. Wadler tries to appease critics by explaining that "a monad is a monoid in the category of endofunctors, what's the problem?"
+
+class Monad m where
+    -- chain
+    (>>=)  :: m a -> (a -> m b) -> m b
+    -- inject
+    return :: a -> m a
+
+--------------------------------
+liftM :: (Monad m) => (a -> b) -> m a -> m b
+liftM f m = m >>= \i ->
+            return (f i)
+--------------------------------
+A monad non-tutorial
+...or why you shouldn't ask what a monad is
+http://strongtyped.blogspot.fi/2010/01/monad-non-tutorial.html
+--------------------------------
+Crockford on Monads (JS):
+http://www.youtube.com/watch?v=dkZFtimgAcM
+--------------------------------
+http://en.wikipedia.org/wiki/Monad_(functional_programming)
+Because a monad can insert additional operations around a program's domain logic, monads can be considered a sort of aspect-oriented programming.[5]
+
+--------------------------------
+Monads and stuff
+--------------------------------
+* Konteksti
+* Analogia: - Laatikko, jossa on kenkŠ. Ostettu laatikko vs. roskiin menevŠ laatikko.
+            - Lift = nostetaan kenkŠ laatikosta. (+) toimii vain kengille, ei laatikoille
+  + Laatikkoanalogia ei aina ihan kanna
+
+When we started our journey to the top of Monad Mountain, we first looked at functors, which are for things that can be mapped over.
+Then, we learned about improved functors called applicative functors, which allowed us to apply normal functions between several applicative values as well as to take a normal value and put it in some default context.
+Finally, we introduced monads as improved applicative functors, which added the ability for these values with context to somehow be fed into normal functions.
+
+So every monad is an applicative functor and every applicative functor is a functor.
+The Applicative type class has a class constraint such that our type has to be an instance of Functor before we can make it an instance of Applicative.
+But even though Monad should have the same constraint for Applicative, as every monad is an applicative functor, it doesn't, because the Monad type class was introduced to Haskell way before Applicative.
+--------------------------------
+Powerset:
+************
+Non-deterministic filter:
+import Control.Monad
+powerset :: [a] -> [[a]]  
+powerset xs = filterM (\x -> [True, False]) xs
+
+> :t filterM
+filterM :: Monad m => (a -> m Bool) -> [a] -> m [a]
+
+> :i []
+data [] a = [] | a : [a] 	-- Defined in `GHC.Types'
+instance Eq a => Eq [a] -- Defined in `GHC.Classes'
+instance Monad [] -- Defined in `GHC.Base'
+...
+
+Java:
+http://stackoverflow.com/questions/1670862/obtaining-powerset-of-a-set-in-java
+--------------------------------
+
