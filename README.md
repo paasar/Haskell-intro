@@ -1,4 +1,5 @@
-Haskell-intro
-=============
+Haskell training
+================
 
-Introduction to Haskell
+basics: Introduction to Haskell
+monads: Monads by examples
