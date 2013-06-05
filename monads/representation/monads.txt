@@ -57,7 +57,16 @@ instance Eq a => Eq [a] -- Defined in `GHC.Classes'
 instance Monad [] -- Defined in `GHC.Base'
 ...
 
+"abc"
+[]
+["a",
+ ""]
+["ab", "b",
+ "a", ""]
+["abc", "bc", "ac", "c",
+ "ab", "b", "a", ""]
+
 Java:
 http://stackoverflow.com/questions/1670862/obtaining-powerset-of-a-set-in-java
 --------------------------------
-
+http://learnyouahaskell.com/a-fistful-of-monads
