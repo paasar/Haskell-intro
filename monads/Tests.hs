@@ -2,17 +2,17 @@ import Test.HUnit
 
 import Tightrope
 
-badLandingTests = TestList [
-    "(0, 0) +2 left " ~: (2, 0) ~=? badLandLeft 2 (0, 0)
-  , "(1, 0) +1 left " ~: (2, 0) ~=? badLandLeft 1 (1, 0)
-  , "(1, 2) +1 right" ~: (1, 3) ~=? badLandRight 1 (1, 2)
-  , "(1, 2) -1 right" ~: (1, 1) ~=? badLandRight (-1) (1, 2)
-  , "(0, 0) +2 l, +1 r, +1 l" ~: (3, 1) ~=? badLandLeft 2 (badLandRight 1 (badLandLeft 1 (0,0)))
-  , "(0, 0) +2 l, +1 r, +1 l" ~: (3, 1) ~=? ((0, 0) -: badLandLeft 2 -: badLandLeft 1 -: badLandRight 1)
-  , "(0, 0) +2 left, +2 right" ~: (2, 2) ~=? badLandTwoLeftTwoRight (0, 0)
-  , "(1, 2) +2 left, +2 right" ~: (3, 4) ~=? badLandTwoLeftTwoRight (1, 2)
-  , "(0, 0) landingChain with 3" ~: (0, 1) ~=? badLandingChain 3 (0, 0)
-  , "(0, 0) landingChain with 4" ~: (0, 2) ~=? badLandingChain 4 (0, 0)
+simpleLandingTests = TestList [
+    "(0, 0) +2 left " ~: (2, 0) ~=? simpleLandLeft 2 (0, 0)
+  , "(1, 0) +1 left " ~: (2, 0) ~=? simpleLandLeft 1 (1, 0)
+  , "(1, 2) +1 right" ~: (1, 3) ~=? simpleLandRight 1 (1, 2)
+  , "(1, 2) -1 right" ~: (1, 1) ~=? simpleLandRight (-1) (1, 2)
+  , "(0, 0) +2 l, +1 r, +1 l" ~: (3, 1) ~=? simpleLandLeft 2 (simpleLandRight 1 (simpleLandLeft 1 (0,0)))
+  , "(0, 0) +2 l, +1 r, +1 l" ~: (3, 1) ~=? ((0, 0) -: simpleLandLeft 2 -: simpleLandLeft 1 -: simpleLandRight 1)
+  , "(0, 0) +2 left, +2 right" ~: (2, 2) ~=? simpleLandTwoLeftTwoRight (0, 0)
+  , "(1, 2) +2 left, +2 right" ~: (3, 4) ~=? simpleLandTwoLeftTwoRight (1, 2)
+  , "(0, 0) simpleLandingChain with 3" ~: (0, 1) ~=? simpleLandingChain 3 (0, 0)
+  , "(0, 0) simpleLandingChain with 4" ~: (0, 2) ~=? simpleLandingChain 4 (0, 0)
   ]
 
 maybeLandingTests = TestList [
@@ -28,7 +28,7 @@ maybeLandingTests = TestList [
   ]
 
 allTests = TestList [
-    badLandingTests
+    simpleLandingTests
   , maybeLandingTests
   ]
 

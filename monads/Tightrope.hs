@@ -22,15 +22,22 @@ type Pole = (Birds, Birds)
 
 
 {-
-These are "bad" because they don't check for possible off balance.
+First fix the functions for landing birds. Same function can be used to
+take off birds by giving Birds parameter a negative value.
 
-Add given Birds amount on the correct side. 
+These are "simple" because they don't check for possible off balance.
+
+Add given Birds amount to the correct side.
+
+Example of a working function:
+> simpleLandLeft 3 (0, 0)
+(3, 0)
 -}
-badLandLeft :: Birds -> Pole -> Pole
-badLandLeft n (left, right) = (left, right)
+simpleLandLeft :: Birds -> Pole -> Pole
+simpleLandLeft n (left, right) = (left, right)
   
-badLandRight :: Birds -> Pole -> Pole
-badLandRight n (left, right) = (left, right)
+simpleLandRight :: Birds -> Pole -> Pole
+simpleLandRight n (left, right) = (left, right)
 
 -- | Helper function for easier chaining.
 (-:) :: Pole -> (Pole -> Pole) -> Pole
@@ -41,24 +48,24 @@ Testing it out.
 Use -: function to chain landing two birds to left and two birds to right
 Start > left 2 > left 2
 -}
-badLandTwoLeftTwoRight :: Pole -> Pole
-badLandTwoLeftTwoRight pole = (-1, -1)
+simpleLandTwoLeftTwoRight :: Pole -> Pole
+simpleLandTwoLeftTwoRight pole = (-1, -1)
 
 {-
 Now create a longer chain with one parameter.
 
 Start > left +1 > right + given amount > left -1 > right -2
 -}
-badLandingChain :: Birds -> Pole -> Pole
-badLandingChain birds pole = (-1, -1)
+simpleLandingChain :: Birds -> Pole -> Pole
+simpleLandingChain birds pole = (-1, -1)
 
 {-
-> landLeft 10 (0,3)  
+> simpleLandLeft 10 (0,3)
 (10,3)
 Way too unbalanced.
 
 -- How about this?
-> (0,0) -: landLeft 1 -: landRight 4 -: landLeft (-1) -: landRight (-2)  
+> (0,0) -: simpleLandLeft 1 -: simpleLandRight 4 -: simpleLandLeft (-1) -: simpleLandRight (-2)
 (0,2)
 
   It might seem like everything is okay but if you follow the steps here,
@@ -69,24 +76,17 @@ Way too unbalanced.
   if the balance is okay but fail if the birds land in a lopsided manner.
   And what better way to add a context of failure to value than by
   using Maybe! Let's rework these functions.
+-}
 
+-- Maybe
+--------------------
+{-
+Here is the data type for Maybe. It can either have a value "Just <something>"
+or no value at all "Nothing".
 > :i Maybe
 data Maybe a = Nothing | Just a
 
-Apply Maybe values in correct places in landLeft and landRight.
--}
-landLeft :: Birds -> Pole -> Maybe Pole
-landLeft n (left, right)
-    | abs ((left + n) - right) < 4 = undefined
-    | otherwise                    = undefined
-  
-landRight :: Birds -> Pole -> Maybe Pole
-landRight n (left, right)
-    | abs (left - (right + n)) < 4 = undefined
-    | otherwise                    = undefined
-
-{-
-  Instead of returning a Pole these functions now return a Maybe Pole.
+  Instead of returning a Pole these functions should return a Maybe Pole.
   They still take the number of birds and the old pole as before,
   but then they check if landing that many birds on the pole would throw
   Pierre off balance. We use guards to check if the difference between
@@ -97,13 +97,24 @@ landRight n (left, right)
 > landLeft 2 (0,0)  
 Just (2,0)  
 > landLeft 10 (0,3)  
-Nothing 
+Nothing
+
+Apply Maybe values in correct places in landLeft and landRight.
 -}
+landLeft :: Birds -> Pole -> Maybe Pole
+landLeft n (left, right)
+    | abs ((left + n) - right) < 4 = undefined
+    | otherwise                    = undefined
+
+landRight :: Birds -> Pole -> Maybe Pole
+landRight n (left, right)
+    | abs (left - (right + n)) < 4 = undefined
+    | otherwise                    = undefined
 
 {-
-Now reproduce land two left and right with a Maybe context.
+Now reproduce land two left and two right with a Maybe context.
 
-Tip: Here you need to use the two functions defined in Monad class
+Tip: Here you need to use two of the functions defined in Monad class
 -}
 landTwoLeftTwoRight :: Pole -> Maybe Pole
 landTwoLeftTwoRight pole = undefined
@@ -120,30 +131,31 @@ It's also worth taking a look at what this would look like if we hadn't made
 the clever choice of treating Maybe values as values with a failure context
 and feeding them to functions like we did. Here's how a series of
 bird landings would look like:
-
-routine :: Maybe Pole  
-routine = case landLeft 1 (0,0) of  
-    Nothing -> Nothing  
-    Just pole1 -> case landRight 4 pole1 of   
-        Nothing -> Nothing  
-        Just pole2 -> case landLeft 2 pole2 of  
-            Nothing -> Nothing  
-            Just pole3 -> landLeft 1 pole3
 -}
+
+landingChain' :: Birds -> Pole -> Maybe Pole
+landingChain' birds pole = case (landLeft 1) pole of
+    Nothing -> Nothing
+    Just pole1 -> case (landRight birds) pole1 of
+        Nothing -> Nothing
+        Just pole2 -> case (landLeft (-1)) pole2 of
+            Nothing -> Nothing
+            Just pole3 -> (landRight (-2)) pole3
 
 -- do notation
 --------------------------
 {-
-Start + one function
-(show turns data into String)
+Let's first investigate >>= with lambda functions.
+
+Start value + one lambda function ("show" turns data into a String):
 > Just 3 >>= (\x -> Just (show x))
 Just "3"
 
-Start + two functions:
+Start value + two lambda functions:
 > Just 3 >>= (\x -> Just "!" >>= (\y -> Just (show x ++ y)))
 Just "3!"
 
-Putting functions on their own rows:
+Now, let's put these functions on their own rows:
 -}
 foo :: Maybe String
 foo = Just 3   >>= (\x ->
@@ -151,14 +163,15 @@ foo = Just 3   >>= (\x ->
       Just (show x ++ y)))
 
 {-
-And same with do notation:
+And converting this to do notation we get rid of >>=:
 -}
 foodo :: Maybe String
 foodo = do
   x <- Just 3
   y <- Just "!"
   Just (show x ++ y)
-
+--  return (show x ++ y)
+-- is fine too.
 
 {-
 Transform landTwoLeftTwoRight into do notation.
