@@ -1,5 +1,9 @@
 module Tightrope where
 
+import Control.Monad
+import Control.Monad.State
+import Control.Monad.Trans.Maybe
+
 {-
   Pierre has decided to take a break from his job at the fish farm and
   try tightrope walking. He's not that bad at it, but he does have one problem:
@@ -179,6 +183,134 @@ Transform landTwoLeftTwoRight into do notation.
 doLandTwoLeftTwoRight :: Pole -> Maybe Pole
 doLandTwoLeftTwoRight pole = do
   Nothing
+
+
+-- IO monad
+-------------------
+{-
+IO monad is used to input data and output data (surprise).
+It represents something that can fail. Something that can have side effects.
+
+Here is a small example of a routine that asks for values and then
+runs a landing sequence with the data.
+
+Try walkTheLine in ghci.
+-}
+walkTheLine :: IO ()
+walkTheLine = do
+  start <- getStart
+  leftBirds <- getStep "Left ?"
+  rightBirds <- getStep "Right ?"
+ 
+  -- chained Maybe 
+  let result = Just start >>= landLeft leftBirds >>= landRight rightBirds
+  
+  putStrLn $ "Result: " ++ show result
+
+
+getStart :: IO Pole
+getStart = do
+  putStrLn "Start?"
+  input <- getLine
+  -- reads's signature can be tought as Read a => String -> [(a, String)]
+  -- or input String -> [(parsed value, remaining String)]
+  let poleS = reads input
+  if null poleS
+    then do
+      putStrLn "No parse. Format is: (0,0)"
+      getStart
+    else return $ fst $ head poleS
+
+
+getStep :: String -> IO Int
+getStep msg = do
+  putStrLn msg
+  input <- getLine
+  let intS = reads input
+  if null intS
+    then do
+      putStrLn "No parse. Give an integer plz."
+      getStep msg
+    else return $ fst $ head intS
+
+
+
+-- State monad and monad transformation
+----------------------------------------
+{-
+Monad transformers are used to combine monads.
+Most common monads have ready made transformer types, like:
+> :t MaybeT
+MaybeT :: m (Maybe a) -> MaybeT m a
+
+This can be used to combine Maybe with other monads, like State.
+
+Here is our own State that keeps track of the difference between
+left and right birds:
+-}
+type DifferenceState = State Int
+{-
+This is actually DifferenceState a = State Int a
+or State "State type" "data type".
+
+So we want to wrap State monad around Maybe Pole:
+DifferenceState (Maybe Pole) = State Int (Maybe Pole)
+
+Then wrapping Maybe or MaybeT around that gives:
+
+MaybeT DifferenceState Pole
+
+Yay! Let's try it out:
+-}
+
+-- | Function that keeps track of current difference between
+-- left and right bird count and lands given birds to left.
+landLeftState :: Birds -> Pole -> MaybeT DifferenceState Pole
+landLeftState n pole@(left, right) = do
+      -- We could use "get" to get current state,
+      -- but here we just use put to update the state.
+      put difference
+      
+      -- 1. call landLeft
+      -- 2. wrap it in our state
+      -- 3. then wrap it in MaybeT
+      MaybeT $ return $ landLeft n pole
+    where difference = abs ((left + n) - right)
+
+{-
+To unwrap our result runMaybeT is used (run<monad> is common for monads);
+> :t runMaybeT
+runMaybeT :: MaybeT m a -> m (Maybe a)
+
+In our example: MaybeT DifferenceState Pole -> DifferenceState (Maybe Pole)
+
+Then unwrapping state:
+> :t runState
+runState :: State s a -> s -> (a, s)
+
+In our example: DifferenceState (Maybe Pole) -> 0 <start state> -> (Maybe Pole, ? <final state>)
+
+Here are two different landing sequences.
+
+Try them in ghci!
+-}
+balanced = runState (runMaybeT (landLeftState 3 (0,0) >>= landLeftState (-2) >>= landLeftState 1)) 0
+tooMuch = runState (runMaybeT (landLeftState 3 (0,0) >>= landLeftState (-2) >>= landLeftState 4)) 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

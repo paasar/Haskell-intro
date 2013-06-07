@@ -3,11 +3,40 @@ The Glasgow Haskell Compiler relies on the command line developer tools (gcc, ar
 --------------------------------
 http://james-iry.blogspot.co.uk/2009/05/brief-incomplete-and-mostly-wrong.html
 1990 - A committee formed by Simon Peyton-Jones, Paul Hudak, Philip Wadler, Ashton Kutcher, and People for the Ethical Treatment of Animals creates Haskell, a pure, non-strict, functional language. Haskell gets some resistance due to the complexity of using monads to control side effects. Wadler tries to appease critics by explaining that "a monad is a monoid in the category of endofunctors, what's the problem?"
+--------------------------------
+TODO: Syntax primer
 
+--------------------------------
+You may have used monads already
+
+Java
+\\\\\\
+http://www.querydsl.com
+
+List<Customer> result = query.from(customer) //customer: Domain object
+    .where(customer.lastName.like("A%"), customer.active.eq(true)) //BooleanExpression x2
+    .orderBy(customer.lastName.asc(), customer.firstName.desc()) //asc() & desc() returns OrderSpecifier<T>
+    .list(customer);
+
+JPAQuery qFrom = query.from(nn);
+JPAQuery qFromWhere = from.where(mm);
+JPAQuery qFromWhereOrder = where.orderBy(oo);
+List<Customer> result = qFromWhereOrder.list(customer);
+
+http://importantshock.wordpress.com/2009/01/18/jquery-is-a-monad/
+
+JavaScript
+\\\\\\\\\\\\
+$("span").fadeIn("slow").text("Alert!");
+
+The first monadic law is that a monad is a wrapper around another type. In Haskell, one has the IO String type, which is returned from functions that read from files, console input, or system calls Ð IO is a monad that wraps the String data type. jQuery obviously satisfies this condition, as it wraps DOM nodes retrieved through given queries.
+The second monadic law is just as simple: all monads must have a function to wrap themselves around other data types. jQuery clearly has ways to apply itself to DOM nodes Ð you use the querying facilities to traverse the DOM, and if youÕre feeling especially saucy, you can use pass the results of document.getElementsByTagName and its siblings to the jQuery object. Haskell refers to this as a type constructor Ð a function that takes some data and wraps that data inside a new type. (jQueryÕs type constructor is its parentheses.)
+The third monadic law, and the only one thatÕs even remotely complicated, is that all monads must be able to feed the value or values that they wrap into another function, as long as that function eventually returns a monad. fadeIn(), text(), and all the other chainable functions are examples of this Ð they take the elements given inside the jQuery object, perform their function on them, then rewraps them back into the jQuery object and returns them.
+--------------------------------
 class Monad m where
-    -- chain
+    -- chain, bind
     (>>=)  :: m a -> (a -> m b) -> m b
-    -- inject
+    -- inject, wrapper
     return :: a -> m a
 
 --------------------------------
