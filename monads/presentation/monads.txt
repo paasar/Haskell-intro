@@ -99,3 +99,304 @@ Java:
 http://stackoverflow.com/questions/1670862/obtaining-powerset-of-a-set-in-java
 --------------------------------
 http://learnyouahaskell.com/a-fistful-of-monads
+
+------------------------------------------------------------------
+<div class="slides">
+    <section>
+        <h1>Monads</h1>
+<div>
+<img src="https://s3.amazonaws.com/media-p.slid.es/uploads/aripaasonen/images/24554/wat-gigantic-duck.jpg" style="">
+        <br>
+</div>
+    </section>
+    <section>
+        <h2>Prerequisites</h2>
+<div>
+        <br>
+    </div>
+<div>
+    <br>
+</div>
+<div>
+<ul>
+<li>
+<span style="text-align: center;">Some kind of idea of Haskell syntax</span>
+<br>
+</li>
+<li>
+<span style="text-align: center;">Haskell Platform installed</span>
+<br>
+</li>
+<ul>
+<li>
+    <span style="text-align: center;">Platform requires Xcode on Mac?</span>
+</li>
+</ul>
+<li>
+<span style="text-align: center;">Clone:&nbsp;git@github.com:paasar/Haskell-intro.git</span>
+<br>
+</li>
+</ul>
+</div>
+<div>
+<br>
+</div>
+</section>
+<section>
+    <h2>Solution to a problem that was not</h2>
+<div>
+    <br>
+</div>
+<div>
+<font style="font-size: 24px;">1990 - A committee formed by Simon Peyton-Jones, Paul Hudak, Philip Wadler, Ashton Kutcher, and People for the Ethical Treatment of Animals creates Haskell, a pure, non-strict, functional language. Haskell gets some resistance due to the complexity of using monads to control side effects. Wadler tries to appease critics by explaining that "a monad is a monoid in the category of endofunctors, what's the problem?"</font>
+<br>
+</div>
+<div>
+<br>
+</div>
+<div>
+    <ul>
+        <li>
+            <span style="text-align: center;">Monads were and are a solution to a problem that didn't exist before pure code was introduced.</span>
+            <br>
+        </li>
+        <li>
+            <span style="text-align: center;">With monads you can manage unpure operations like IO in otherwise pure code.</span>
+        </li>
+        <li>
+            <span style="text-align: center;">However, monads are useful in other things and also outside functional programming.</span>
+            <br>
+        </li>
+    </ul>
+</div>
+</section>
+<section>
+<h2>You may have used monads already</h2>
+<div style="text-align: left;">
+    &nbsp; &nbsp; &nbsp; &nbsp;Java (QueryDSL)</div>
+<div>
+<pre><code><font style="font-size: 14px;">List<customer> result = query.from(customer) <font color="#30b80a">//customer: Domain object</font>
+&nbsp; &nbsp; .where(customer.lastName.like("A%"), customer.active.eq(true)) <font color="#30b80a">//BooleanExpression x2</font>
+&nbsp; &nbsp; .orderBy(customer.lastName.asc(), customer.firstName.desc()) <span style="color: rgb(48, 184, 10); font-family: monospace; font-size: 13.906717300415039px; font-style: normal; font-variant: normal;">//OrderSpecifier x2</span><t>
+&nbsp; &nbsp; .list(customer);
+
+JPAQuery qFrom = query.from(nn);
+JPAQuery qFromWhere = qFrom.where(mm);
+JPAQuery qFromWhereOrder = qFromWhere.orderBy(oo);
+List<customer> result = qFromWhereOrder.list(customer);</customer></t></customer></font></code></pre>
+<div style="text-align: left;">
+<br>
+</div>
+<div style="text-align: left;">&nbsp; &nbsp; &nbsp; &nbsp;JavaScript (jQuery)</div>
+<pre><code><span style="font-family: monospace;">$("span").fadeIn("slow").text("Alert!");</span><br></code></pre>
+</div>
+
+
+</section>
+<section>
+    <section>
+        <h2>Monad is...</h2>
+        <div>
+            <ul>
+                <li>
+                    <span style="text-align: center;">Context</span>
+                    <br>
+                </li>
+                <li>
+                    <span style="text-align: center;">Wrapper</span>
+                    <br>
+                </li>
+                <li>
+                    <span style="text-align: center;">A way to chain functions in a context</span>
+                    <br>
+                </li>
+                <li>
+                    <span style="text-align: center;">Very abstract</span>
+                </li>
+                <ul>
+                    <li>
+                        <span style="text-align: center;">State</span>
+                    </li>
+                    <li>
+                        <span style="text-align: center;">Maybe</span>
+                    </li>
+                    <li>
+                        <span style="text-align: center;">Future</span>
+                    </li>
+                    <li>
+                        <span style="text-align: center;">IO</span>
+                    </li>
+                    <li>
+                        <span style="text-align: center;">you name it</span>
+                    </li>
+                </ul>
+            </ul>
+        </div>
+    </section>
+    <section>
+        <h2>Monadic laws</h2>
+<div>
+        <br>
+    </div>
+<div>
+    <br>
+</div>
+<div>
+<br>
+</div>
+<div>1.</div>
+<div>
+<div>
+The first monadic law is that a <b>monad is a wrapper around another type</b>. In Haskell, one has the IO String type, which is returned from functions that read from files, console input, or system calls – IO is a monad that wraps the String data type.<br>
+<br>
+</div>
+</div>
+</section>
+<section>
+    <div>
+        <br>
+    </div>
+<div>
+    <br>
+</div>
+<div>2.</div>The second monadic law is just as simple: all monads <b>must have a function to wrap themselves around other data types</b>.<div>
+<br>
+</div>
+<div>Haskell refers to this as a type constructor – a function that takes some data and wraps that data inside a new type. (jQuery’s type constructor is its parentheses.)<br>
+</div>
+</section>
+<section>
+    <h2>
+        <br>
+    </h2>
+<div>3.</div>
+<div>The third monadic law, and the only one that’s even remotely complicated, is that all monads <b>must be able to feed the value or values that they wrap into another function, as long as that function eventually returns a monad</b>.</div>
+<div>
+    <br>
+</div>
+<div>fadeIn(), text(), and all the other chainable functions are examples of this – they take the elements given inside the jQuery object, perform their function on them, then rewraps them back into the jQuery object and returns them.<br>
+</div>
+</section>
+</section>
+<section>
+    <section>
+        <h2>Haskell syntax</h2>
+<div>
+        <pre class="de1" style="border-style: none; border-color: white; margin: 0px; background-image: none; vertical-align: top;">
+<pre><code style="font-style: normal; font-variant: normal;"><font style="font-size: 18px;" color="#dbdbdb">module Main where
+ 
+main :: IO ()
+main = putStrLn "Hello, World!"
+
+</font><font style="font-size: 18px;" color="#30b80a">-- Type annotation (optional)</font><font style="font-size: 18px;" color="#dbdbdb">
+factorial :: Integer -&gt; Integer
+</font><font style="font-size: 18px;" color="#30b80a">-- Using recursion</font><font style="font-size: 18px;" color="#dbdbdb">
+factorial 0 = 1
+factorial n | n &gt; 0 = n * factorial (n - 1)</font></code><code style="font-style: normal; font-variant: normal;"><font style="font-size: 18px;" color="#dbdbdb">            | otherwise = error "No negs plz."
+
+</font><font style="font-size: 18px;" color="#30b80a">-- Using fold (implements product)</font><font style="font-size: 18px;" color="#dbdbdb">
+factorial' n = foldl1 (*) [1..n]
+<br></font></code><code style="font-style: normal; font-variant: normal;"><font style="font-size: 18px;" color="#dbdbdb">
+data TrafficLight = Red | Yellow | Green</font></code><code style="font-style: normal; font-variant: normal;"><font style="font-size: 18px;" color="#dbdbdb"><br></font></code><code style="font-style: normal; font-variant: normal;"><font style="font-size: 18px;" color="#dbdbdb">type Name = String</font></code><code><font><span style="font-size: 18.185707092285156px;"><font color="#dbdbdb">data Person = Person
+               {
+                 firstName :: Name
+               , lastName :: Name
+               , age :: Int
+               } deriving Show</font></span><font color="#000000"><span style="font-size: 18px;"><br></span></font></font></code><code><font><span style="font-size: 18.185707092285156px;"><font color="#dbdbdb"><br></font></span></font></code>        </pre>
+    </pre>
+</div>
+</section>
+<section>
+<h2>More Haskell syntax</h2>
+<div>
+<pre><code><font color="#30b80a">-- class is kind of like interface in Java</font></code><code>class YesNo a where</code><code>  yesno :: a -&gt; Bool</code><code><br></code><code><font color="#30b80a">-- instances are the implementing part for some type</font></code><code>instance YesNo Int where</code><code>  yesno 0 = False</code><code>  yesno _ = True</code><code><br></code><code>instance YesNo [a] where</code><code>  yesno [] = False</code><code>  yesno _  = True</code></pre>
+</div>
+<div>
+    <br>
+</div>
+
+</section>
+</section>
+<section>
+    <section>
+<h2>Monad in Haskell code</h2>
+<div>
+<pre><code>class Monad m where
+&nbsp; &nbsp; <font color="#30b80a">-- chain, bind</font>
+&nbsp; &nbsp; (&gt;&gt;=) &nbsp;:: m a -&gt; (a -&gt; m b) -&gt; m b
+&nbsp; &nbsp; <font color="#30b80a">-- inject, wrapper, pure</font>
+&nbsp; &nbsp; return :: a -&gt; m a</code><code><br></code><code>foo :: (Monad m) =&gt; Int -&gt; m Int</code><code><span style="font-family: monospace;">bar ::&nbsp;</span><span>(Monad m) =&gt; </span><span>Int -&gt; m Bool</span></code><code><br></code><code>return 1 &gt;&gt;= foo &gt;&gt;= bar<span> </span></code>    </pre>
+</div>
+</section>
+    <section>
+        <h2>continued</h2>
+        <div>
+            <pre style="font-style: normal; font-variant: normal; width: 848.6875px;">
+                <code>
+                    <span style="color: rgb(48, 184, 10);">-- With 'concrete' State monad</span>
+                    <br>
+                </code>
+                <code>foo' :: Int -&gt; MyState Int</code>
+                <code>bar' :: Int -&gt; MyState Bool</code>
+                <code>
+                    <br>
+                </code>
+                <code>stuff :: MyState Bool</code>
+                <code>stuff = return 1 &gt;&gt;=<span style="font-family: monospace;"> foo' &gt;&gt;= bar'</span>
+            </code>
+            <code>
+                <span style="font-family: monospace;">
+                    <br>
+                </span>
+            </code>
+            <code>
+                <span style="font-family: monospace;">doStuff :: MyState Bool</span>
+            </code>
+            <code>
+                <span style="font-family: monospace;">doStuff = do</span>
+            </code>
+            <code>
+                <span style="font-family: monospace;">  x &lt;- foo' 1</span>
+            </code>
+            <code>
+                <span style="font-family: monospace;">  z &lt;- bar' x</span>
+            </code>
+            <code>
+                <span style="font-family: monospace;">  return z</span>
+            </code>
+        </pre>
+    </div>
+</section>
+</section>
+<section>
+    <h2>References &amp; links</h2>
+    <div>
+        <ul>
+            <li>
+                <span style="text-align: center;">http://learnyouahaskell.com/<br>
+                </span>
+            </li>
+            <li>
+                <span style="text-align: center;">http://importantshock.wordpress.com/2009/01/18/jquery-is-a-monad/</span>
+                <br>
+            </li>
+            <li>
+                <span style="text-align: center;">http://strongtyped.blogspot.fi/2010/01/monad-non-tutorial.html</span>
+                <br>
+            </li>
+            <li>
+                <span style="text-align: center;">
+                    <b>Crockford on Monads (~1 h)</b>
+                    <br>http://www.youtube.com/watch?v=dkZFtimgAcM</span>
+                    <br>
+                </li>
+                <li>
+                    <span style="text-align: center;">http://www.querydsl.com</span>
+                </li>
+                <li>
+                    <span style="text-align: center;">http://james-iry.blogspot.co.uk/2009/05/brief-incomplete-and-mostly-wrong.html</span>
+                </li>
+            </ul>
+        </div>
+    </section>
+</div>

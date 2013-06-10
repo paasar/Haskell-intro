@@ -185,6 +185,22 @@ doLandTwoLeftTwoRight pole = do
   Nothing
 
 
+{-
+What to do when we want to use existing functions with a value in a monad?
+
+Using (+1) with (Maybe Int) won't compile because
+(+1)'s signature is "Int -> Int" not "Maybe Int -> Maybe Int".
+
+We can use liftM to raise a value from its context to apply a function to it.
+> :t liftM
+liftM :: Monad m => (a1 -> r) -> m a1 -> m r
+
+Here is an example:
+-}
+lifting :: Int -> Maybe Int
+lifting n = liftM (+1) (Just n)
+
+
 -- IO monad
 -------------------
 {-
