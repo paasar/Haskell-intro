@@ -38,10 +38,10 @@ Example of a working function:
 (3, 0)
 -}
 simpleLandLeft :: Birds -> Pole -> Pole
-simpleLandLeft n (left, right) = (left, right)
+simpleLandLeft n (left, right) = undefined
   
 simpleLandRight :: Birds -> Pole -> Pole
-simpleLandRight n (left, right) = (left, right)
+simpleLandRight n (left, right) = undefined
 
 -- | Helper function for easier chaining.
 (-:) :: Pole -> (Pole -> Pole) -> Pole
@@ -53,7 +53,7 @@ Use -: function to chain landing two birds to left and two birds to right
 Start > left 2 > left 2
 -}
 simpleLandTwoLeftTwoRight :: Pole -> Pole
-simpleLandTwoLeftTwoRight pole = (-1, -1)
+simpleLandTwoLeftTwoRight pole = undefined
 
 {-
 Now create a longer chain with one parameter.
@@ -61,7 +61,7 @@ Now create a longer chain with one parameter.
 Start > left +1 > right + given amount > left -1 > right -2
 -}
 simpleLandingChain :: Birds -> Pole -> Pole
-simpleLandingChain birds pole = (-1, -1)
+simpleLandingChain birds pole = undefined
 
 {-
 > simpleLandLeft 10 (0,3)
@@ -278,7 +278,7 @@ landLeftState n pole@(left, right) = do
     where difference = abs ((left + n) - right)
 
 {-
-To unwrap our result runMaybeT is used (run<monad> is common for monads);
+To unwrap our result runMaybeT is used (run<monad> is common function for monads);
 > :t runMaybeT
 runMaybeT :: MaybeT m a -> m (Maybe a)
 
