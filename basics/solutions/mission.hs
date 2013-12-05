@@ -65,13 +65,13 @@ main = do
   --         Use name to select a PairProgrammer that is updated.
   -- Note: If you use scands make sure the file encoding is UTF-8.
   --       In Komodo: Edit > Current File Settings... > Encoding
-  let pps2 = updateInList "Paasonen Ari" pps
+  let pps2 = updateInList "Esimerkki Elli" pps
   putStrLn $ show pps2
-  let pps3 = updateInList "Paasonen Ari" pps2
+  let pps3 = updateInList "Esimerkki Elli" pps2
   putStrLn $ show pps3
-  let pps4 = updateInList "Paasonen Ari" pps3
+  let pps4 = updateInList "Esimerkki Elli" pps3
   putStrLn $ show pps4
-  let pps5 = updateInList "Friman Timo" pps4
+  let pps5 = updateInList "Esimerkki Esko" pps4
   putStrLn $ show pps5
   
   hClose inFile
