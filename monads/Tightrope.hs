@@ -44,6 +44,8 @@ simpleLandRight :: Birds -> Pole -> Pole
 simpleLandRight n (left, right) = undefined
 
 -- | Helper function for easier chaining.
+-- Function that takes a Pole and a other function that takes a Pole and returns a Pole.
+-- Normally "(-:) x f" but with "x -: f" pattern match we can put it between its parameters.
 (-:) :: Pole -> (Pole -> Pole) -> Pole
 x -: f = f x
 
