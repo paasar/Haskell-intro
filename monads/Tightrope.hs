@@ -60,7 +60,7 @@ simpleLandTwoLeftTwoRight pole = undefined
 {-
 Now create a longer chain with one parameter.
 
-Start > left +1 > right + given amount > left -1 > right -2
+Start > left +1 > right + given amount > left (-1) > right (-2)
 -}
 simpleLandingChain :: Birds -> Pole -> Pole
 simpleLandingChain birds pole = undefined
@@ -120,14 +120,15 @@ landRight n (left, right)
 {-
 Now reproduce land two left and two right with a Maybe context.
 
-Tip: Here you need to use two of the functions defined in Monad class
+Tip: Here you need to use two of the functions defined in Monad class.
+     You can use :info Monad in ghci or Hoogle Monad for more info.
 -}
 landTwoLeftTwoRight :: Pole -> Maybe Pole
 landTwoLeftTwoRight pole = undefined
 
 {-
 Do the same thing for landingChain.
-Start > left +1 > right + given amount > left -1 > right -2
+Start > left + 1 > right + given amount > left (-1) > right (-2)
 -}
 landingChain :: Birds -> Pole -> Maybe Pole
 landingChain birds pole = undefined

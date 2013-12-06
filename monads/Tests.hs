@@ -3,6 +3,7 @@ import Test.HUnit
 import Tightrope
 
 simpleLandingTests = TestList [
+  -- description ~: expected ~=? actual
     "(0, 0) +2 left " ~: (2, 0) ~=? simpleLandLeft 2 (0, 0)
   , "(1, 0) +1 left " ~: (2, 0) ~=? simpleLandLeft 1 (1, 0)
   , "(1, 2) +1 right" ~: (1, 3) ~=? simpleLandRight 1 (1, 2)
